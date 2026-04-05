@@ -5,8 +5,8 @@ Telegram-бот, который общается с Claude AI.
 
 import os
 import logging
+import json
 import httpx
-from anthropic import AsyncAnthropic
 from telegram import Update
 from telegram.ext import Application, MessageHandler, CommandHandler, filters, ContextTypes
 
@@ -29,7 +29,12 @@ CONTEXT_FILES = [
     "БОТЫ_И_АВТОМАТИЗАЦИЯ.md",
 ]
 
-client = AsyncAnthropic(api_key=CLAUDE_API_KEY)
+CLAUDE_URL = "https://api.anthropic.com/v1/messages"
+CLAUDE_HEADERS = {
+    "x-api-key": CLAUDE_API_KEY,
+    "anthropic-version": "2023-06-01",
+    "content-type": "application/json",
+}
 
 # История сообщений по каждому пользователю (сбрасывается при рестарте)
 histories: dict[int, list] = {}
@@ -112,13 +117,20 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.chat.send_action("typing")
 
     try:
-        response = await client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=4096,
-            system=SYSTEM_PROMPT,
-            messages=histories[user_id],
-        )
-        reply = response.content[0].text
+        async with httpx.AsyncClient(timeout=60.0) as http:
+            r = await http.post(
+                CLAUDE_URL,
+                headers=CLAUDE_HEADERS,
+                json={
+                    "model": "claude-sonnet-4-6",
+                    "max_tokens": 4096,
+                    "system": SYSTEM_PROMPT,
+                    "messages": histories[user_id],
+                }
+            )
+            r.raise_for_status()
+            data = r.json()
+        reply = data["content"][0]["text"]
 
         # Сохраняем ответ в историю
         histories[user_id].append({"role": "assistant", "content": reply})
