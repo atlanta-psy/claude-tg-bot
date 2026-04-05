@@ -147,7 +147,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"Ошибка подключения: {e}")
     except httpx.HTTPStatusError as e:
         log.error(f"Ошибка HTTP от Claude: {e.response.status_code} — {e.response.text}")
-        await update.message.reply_text(f"Ошибка API: {e.response.status_code}")
+        await update.message.reply_text(f"Ошибка API {e.response.status_code}: {e.response.text[:300]}")
     except Exception as e:
         log.error(f"Неизвестная ошибка: {type(e).__name__}: {e}")
         await update.message.reply_text(f"Ошибка: {type(e).__name__}: {e}")
