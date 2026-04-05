@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 log = logging.getLogger(__name__)
 
 TG_TOKEN = os.environ["TG_TOKEN"]
-CLAUDE_API_KEY = os.environ["CLAUDE_API_KEY"]
+CLAUDE_API_KEY = os.environ["CLAUDE_API_KEY"].strip()
 ALLOWED_USER_ID = int(os.environ.get("ALLOWED_USER_ID", "0"))
 
 GITHUB_RAW = "https://raw.githubusercontent.com/atlanta-psy/elena-claude-context/main"
