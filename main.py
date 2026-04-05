@@ -5,8 +5,8 @@ Telegram-бот, который общается с Claude AI.
 
 import os
 import logging
-import requests
-from anthropic import Anthropic
+import httpx
+from anthropic import AsyncAnthropic
 from telegram import Update
 from telegram.ext import Application, MessageHandler, CommandHandler, filters, ContextTypes
 
@@ -29,7 +29,7 @@ CONTEXT_FILES = [
     "БОТЫ_И_АВТОМАТИЗАЦИЯ.md",
 ]
 
-client = Anthropic(api_key=CLAUDE_API_KEY)
+client = AsyncAnthropic(api_key=CLAUDE_API_KEY)
 
 # История сообщений по каждому пользователю (сбрасывается при рестарте)
 histories: dict[int, list] = {}
@@ -39,9 +39,9 @@ def load_context() -> str:
     """Загружает файлы контекста с GitHub."""
     parts = []
     for filename in CONTEXT_FILES:
-        url = f"{GITHUB_RAW}/{requests.utils.quote(filename)}"
+        url = f"{GITHUB_RAW}/{httpx.URL(filename)}"
         try:
-            r = requests.get(url, timeout=10)
+            r = httpx.get(url, timeout=15, follow_redirects=True)
             if r.status_code == 200:
                 parts.append(f"## {filename}\n\n{r.text}")
                 log.info(f"Загружен: {filename}")
@@ -112,7 +112,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.chat.send_action("typing")
 
     try:
-        response = client.messages.create(
+        response = await client.messages.create(
             model="claude-sonnet-4-6",
             max_tokens=4096,
             system=SYSTEM_PROMPT,
