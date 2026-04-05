@@ -15,6 +15,7 @@ log = logging.getLogger(__name__)
 
 TG_TOKEN = os.environ["TG_TOKEN"]
 CLAUDE_API_KEY = os.environ["CLAUDE_API_KEY"].strip()
+log.info(f"Ключ: длина={len(CLAUDE_API_KEY)}, начало={CLAUDE_API_KEY[:8]}, конец={CLAUDE_API_KEY[-4:]}")
 ALLOWED_USER_ID = int(os.environ.get("ALLOWED_USER_ID", "0"))
 
 GITHUB_RAW = "https://raw.githubusercontent.com/atlanta-psy/elena-claude-context/main"
