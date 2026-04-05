@@ -141,7 +141,7 @@ def main():
     app.add_handler(CommandHandler("clear", clear))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     log.info("Бот запущен!")
-    app.run_polling()
+    app.run_polling(drop_pending_updates=True, allowed_updates=["message"])
 
 
 if __name__ == "__main__":
