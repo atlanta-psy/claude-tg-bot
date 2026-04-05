@@ -20,14 +20,9 @@ ALLOWED_USER_ID = int(os.environ.get("ALLOWED_USER_ID", "0"))
 
 GITHUB_RAW = "https://raw.githubusercontent.com/atlanta-psy/elena-claude-context/main"
 CONTEXT_FILES = [
-    "CLAUDE.md",
     "ПАСПОРТ_БРЕНДА.md",
-    "ЭКСПЕРТИЗА.md",
-    "СТИЛЬ_РЕЧИ.md",
-    "СТИЛЬ_ТЕКСТА.md",
-    "СТРАТЕГИЯ_ПРОДУКТОВ.md",
-    "карточка клиента клауд.md",
     "БОТЫ_И_АВТОМАТИЗАЦИЯ.md",
+    "СТИЛЬ_РЕЧИ.md",
 ]
 
 CLAUDE_URL = "https://api.anthropic.com/v1/messages"
